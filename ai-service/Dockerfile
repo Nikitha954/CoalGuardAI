@@ -1,7 +1,22 @@
-FROM python:3.11-slim
+# Use a lightweight Python Linux image
+FROM python:3.10-slim
+
+# Install Tesseract OCR system dependencies
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    libtesseract-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up the application directory
 WORKDIR /app
-COPY requirements.txt .
+COPY . /app
+
+# Install Python packages (including a production server)
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-EXPOSE 5000
-CMD ["python", "app.py"]
+RUN pip install gunicorn
+
+# Expose the port Render uses
+EXPOSE 10000
+
+# Boot the Flask app using Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "app:app"]
