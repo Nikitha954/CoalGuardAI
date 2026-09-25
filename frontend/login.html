@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sign in — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="login-shell">
+  <div class="login-visual">
+    <div class="eyebrow">Ministry of Coal &middot; Coal India Limited</div>
+    <h1>AI-Based Smart Governance &amp; Compliance Monitoring for Coal Mines</h1>
+    <p>One centralized platform for statutory compliance, inspections, violations, corrective actions and operational risk — across every subsidiary and mine site.</p>
+    <div class="seam-stack" style="margin-top: 36px;">
+      <div class="seam"></div>
+      <div class="seam"></div>
+      <div class="seam"></div>
+      <div class="seam"></div>
+    </div>
+  </div>
+
+  <div class="login-panel">
+    <div class="login-card">
+      <h2>Sign in</h2>
+      <div class="sub">Enter your credentials to access the governance dashboard.</div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" required autocomplete="username" placeholder="you@coal.gov" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+        </div>
+        <div id="login-error" class="form-error"></div>
+        <button type="submit" id="login-submit" class="btn btn-primary">Sign in</button>
+      </form>
+
+      <div class="login-demo-box">
+        <strong>Demo accounts</strong> (password: <span class="mono">Coal@2026</span>) — click a row to autofill:
+        <div class="demo-row" data-email="admin@coal.gov"><span>Super Admin</span><span>admin@coal.gov</span></div>
+        <div class="demo-row" data-email="manager@mine.gov"><span>Mine Manager</span><span>manager@mine.gov</span></div>
+        <div class="demo-row" data-email="safety@mine.gov"><span>Safety Officer</span><span>safety@mine.gov</span></div>
+        <div class="demo-row" data-email="inspector@mine.gov"><span>Inspector</span><span>inspector@mine.gov</span></div>
+        <div class="demo-row" data-email="corporate@coal.gov"><span>Corporate Manager</span><span>corporate@coal.gov</span></div>
+        <div class="demo-row" data-email="regulator@gov.in"><span>Regulatory Officer</span><span>regulator@gov.in</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

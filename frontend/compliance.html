@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Compliance Rules &amp; Statutory Standards — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Compliance Rules &amp; Statutory Standards</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Compliance KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Compliance Rules</div>
+          <div class="kpi-value" id="kpi-total-rules">--</div>
+          <div class="kpi-hint">Statutory master rules</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Enforceable Rules</div>
+          <div class="kpi-value positive" id="kpi-active-rules">--</div>
+          <div class="kpi-hint">Monitored during inspections</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Critical Severity Rules</div>
+          <div class="kpi-value highlight" id="kpi-critical-rules">--</div>
+          <div class="kpi-hint">Zero-tolerance DGMS mandates</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Compliance Categories</div>
+          <div class="kpi-value" id="kpi-categories">--</div>
+          <div class="kpi-hint">Safety, Environment, Labour, etc.</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <input type="text" id="search-rule" placeholder="Search rule code, title, department, or description..." style="min-width:280px; padding:7px 12px; font-size:13.5px;" />
+        <select id="filter-category"><option value="">All Categories</option></select>
+        <select id="filter-severity">
+          <option value="">All Severities</option>
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active Only</option>
+          <option value="INACTIVE">Inactive Only</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="btn-add-rule" class="btn btn-primary hidden">+ Create Compliance Rule</button>
+      </div>
+
+      <!-- Rules Table -->
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Rule Code</th>
+              <th>Title &amp; Statutory Mandate</th>
+              <th>Category</th>
+              <th>Frequency</th>
+              <th>Severity</th>
+              <th>Responsible Dept.</th>
+              <th>Due Period</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rules-table-body">
+            <tr><td colspan="9" class="state-panel">Loading compliance rules...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Create / Edit / View Rule Modal -->
+<div class="modal-backdrop hidden" id="rule-modal">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <h3 id="rule-modal-title">Create Compliance Rule</h3>
+      <button type="button" class="modal-close" id="rule-modal-close">&times;</button>
+    </div>
+    <form id="rule-form">
+      <input type="hidden" id="r-id" />
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-code">Rule Code *</label>
+            <input type="text" id="r-code" required placeholder="e.g. SAF-004, ENV-004" />
+          </div>
+          <div class="form-group">
+            <label for="r-category">Category *</label>
+            <select id="r-category" required></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-title">Rule Title *</label>
+            <input type="text" id="r-title" required placeholder="e.g. Gas Monitoring &amp; Methane Level Sensor Calibration" />
+          </div>
+          <div class="form-group">
+            <label for="r-dept">Responsible Department</label>
+            <input type="text" id="r-dept" placeholder="e.g. Safety &amp; Rescue / Ventilation" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-severity">Severity Rating</label>
+            <select id="r-severity">
+              <option value="LOW">Low</option>
+              <option value="MEDIUM" selected>Medium</option>
+              <option value="HIGH">High</option>
+              <option value="CRITICAL">Critical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="r-frequency">Enforcement Frequency</label>
+            <select id="r-frequency">
+              <option value="DAILY">Daily</option>
+              <option value="WEEKLY">Weekly</option>
+              <option value="MONTHLY" selected>Monthly</option>
+              <option value="QUARTERLY">Quarterly</option>
+              <option value="ANNUAL">Annual</option>
+              <option value="ONE_TIME">One Time</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-due-days">Due / Recurrence Period (Days)</label>
+            <input type="number" id="r-due-days" min="1" max="3650" value="30" />
+          </div>
+          <div class="form-group">
+            <label for="r-mine">Applicable Mine Site</label>
+            <select id="r-mine">
+              <option value="">All Mines (Universal Rule)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="r-status">Status</label>
+            <select id="r-status">
+              <option value="ACTIVE" selected>ACTIVE (Enforced)</option>
+              <option value="INACTIVE">INACTIVE (Archived)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="r-description">Statutory Description / Standard Operating Procedure</label>
+          <textarea id="r-description" rows="3" placeholder="Provide detailed legal reference (e.g. Coal Mines Regulations 2017 Reg 124), mandatory audit criteria, and compliance steps..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="rule-modal-cancel">Close</button>
+        <button type="submit" class="btn btn-primary" id="rule-modal-submit">Save Compliance Rule</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/compliance.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

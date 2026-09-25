@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mines — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Mine Management</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header"><h3>Mine Locations</h3></div>
+        <div id="mines-map"></div>
+        <div class="legend-row">
+          <span><span class="legend-dot low"></span>Low Risk</span>
+          <span><span class="legend-dot medium"></span>Medium Risk</span>
+          <span><span class="legend-dot high"></span>High Risk</span>
+          <span><span class="legend-dot critical"></span>Critical Risk</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="search-input" placeholder="Search mine name or code..." style="min-width:220px;" />
+        <select id="filter-subsidiary"><option value="">All Subsidiaries</option></select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+          <option value="UNDER_MAINTENANCE">Under Maintenance</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="add-mine-btn" class="btn btn-primary hidden">+ Add Mine</button>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mine</th>
+              <th>Subsidiary</th>
+              <th>Location</th>
+              <th>Type</th>
+              <th>Manager</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="mines-table-body">
+            <tr><td colspan="7" class="state-panel">Loading mines...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Add/Edit Mine Modal -->
+<div class="modal-backdrop hidden" id="mine-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Mine</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <form id="mine-form">
+      <div class="modal-body">
+        <input type="hidden" id="mine-id" />
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mine-name">Mine Name</label>
+            <input type="text" id="mine-name" required placeholder="e.g. Gevra Opencast Mine" />
+          </div>
+          <div class="form-group">
+            <label for="mine-code">Mine Code</label>
+            <input type="text" id="mine-code" required placeholder="e.g. SECL-GEV-01" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mine-subsidiary">Subsidiary</label>
+            <select id="mine-subsidiary" required></select>
+          </div>
+          <div class="form-group">
+            <label for="mine-type">Mine Type</label>
+            <select id="mine-type">
+              <option value="OPENCAST">Opencast</option>
+              <option value="UNDERGROUND">Underground</option>
+              <option value="MIXED">Mixed</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mine-state">State</label>
+            <input type="text" id="mine-state" placeholder="e.g. Chhattisgarh" />
+          </div>
+          <div class="form-group">
+            <label for="mine-district">District</label>
+            <input type="text" id="mine-district" placeholder="e.g. Korba" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mine-lat">Latitude</label>
+            <input type="number" step="0.0001" id="mine-lat" placeholder="22.3595" />
+          </div>
+          <div class="form-group">
+            <label for="mine-lng">Longitude</label>
+            <input type="number" step="0.0001" id="mine-lng" placeholder="82.6892" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="mine-capacity">Production Capacity (tonnes/year)</label>
+            <input type="number" id="mine-capacity" placeholder="35000000" />
+          </div>
+          <div class="form-group">
+            <label for="mine-status">Status</label>
+            <select id="mine-status">
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+              <option value="UNDER_MAINTENANCE">Under Maintenance</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="modal-save">Save Mine</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/mines.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

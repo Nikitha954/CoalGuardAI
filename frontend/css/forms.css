@@ -1,0 +1,241 @@
+/* =====================================================================
+   Forms, modals, and the login page
+   ===================================================================== */
+
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  margin-bottom: 6px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: var(--font-body);
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: 2px solid var(--color-ember);
+  outline-offset: 1px;
+  border-color: var(--color-ember);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-error {
+  color: var(--color-critical);
+  font-size: 12.5px;
+  margin-top: 6px;
+}
+.field-hint { font-size: 11.5px; color: var(--color-ink-muted); margin-top: 4px; }
+
+/* ---- Modal ---- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 20px;
+}
+.modal-backdrop.hidden { display: none !important; }
+.modal {
+  position: relative;
+  z-index: 10001;
+  background: var(--color-surface, #ffffff);
+  border-radius: var(--radius-md);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+.modal-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-header h3 { margin: 0; font-size: 16px; }
+.modal-close {
+  background: none; border: none; font-size: 20px; cursor: pointer;
+  color: var(--color-ink-muted); line-height: 1;
+}
+.modal-body { padding: 20px 22px; }
+.modal-footer {
+  padding: 16px 22px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ---- Confirm dialog ---- */
+.confirm-body { font-size: 14px; color: var(--color-ink-muted); line-height: 1.5; }
+
+/* =====================================================================
+   Login Page
+   ===================================================================== */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-sidebar);
+}
+.login-visual {
+  flex: 1.1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 56px;
+  color: #E7E4DE;
+  position: relative;
+  overflow: hidden;
+}
+.login-visual .seam-stack { display: flex; flex-direction: column; gap: 3px; margin-bottom: 40px; }
+.login-visual .seam { height: 14px; border-radius: 2px; }
+.login-visual .seam:nth-child(1) { width: 40%; background: var(--color-seam-1); }
+.login-visual .seam:nth-child(2) { width: 68%; background: var(--color-seam-2); }
+.login-visual .seam:nth-child(3) { width: 100%; background: var(--color-seam-3); }
+.login-visual .seam:nth-child(4) { width: 55%; background: var(--color-seam-4); }
+.login-visual .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-seam-4);
+  margin-bottom: 14px;
+}
+.login-visual h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  color: #fff;
+  max-width: 520px;
+  margin-bottom: 16px;
+}
+.login-visual p {
+  color: #A9AFB8;
+  font-size: 14.5px;
+  max-width: 460px;
+  line-height: 1.6;
+}
+.login-panel {
+  width: 460px;
+  flex-shrink: 0;
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+.login-card { width: 100%; max-width: 360px; }
+.login-card h2 { font-size: 21px; margin-bottom: 6px; }
+.login-card .sub { color: var(--color-ink-muted); font-size: 13.5px; margin-bottom: 28px; }
+.login-card .btn-primary { width: 100%; justify-content: center; padding: 11px; margin-top: 4px; }
+.login-demo-box {
+  margin-top: 26px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--color-ink-muted);
+}
+.login-demo-box strong { color: var(--color-ink); }
+.login-demo-box .demo-row {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono);
+  padding: 3px 0;
+  cursor: pointer;
+}
+.login-demo-box .demo-row:hover { color: var(--color-ember); }
+
+@media (max-width: 900px) {
+  .login-visual { display: none; }
+  .login-panel { width: 100%; }
+}
+
+/* ---- Multilingual Voice Input for Description Fields ---- */
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.form-label-row label {
+  margin-bottom: 0 !important;
+}
+.btn-desc-mic {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #dcdfe4);
+  color: var(--color-ink, #2d3748);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.btn-desc-mic:hover {
+  background: var(--color-bg, #f4f6f8);
+  border-color: var(--color-primary, #1e40af);
+  color: var(--color-primary, #1e40af);
+}
+.btn-desc-mic.recording {
+  background: #fef2f2;
+  border-color: #ef4444;
+  color: #b91c1c;
+  animation: pulse-desc-mic 1.2s infinite ease-in-out;
+}
+.btn-desc-mic .mic-icon {
+  font-size: 13px;
+  line-height: 1;
+}
+.btn-desc-mic .mic-status-text {
+  font-size: 11px;
+}
+
+.btn-desc-translate {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #dcdfe4);
+  color: #374151;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+.btn-desc-translate:hover {
+  background: #f0fdf4;
+  border-color: #10b981;
+  color: #047857;
+}
+@keyframes pulse-desc-mic {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* Floating Voice Assistant Mic Recording Pulse */
+#btn-voice-mic.recording {
+  background: #ef4444 !important;
+  color: white !important;
+  animation: pulse-desc-mic 1.2s infinite ease-in-out;
+}
+

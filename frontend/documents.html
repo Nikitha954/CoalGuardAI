@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Statutory Documents &amp; OCR Governance — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+<style>
+.workflow-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  gap: 12px;
+}
+.wf-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+  min-width: 120px;
+  position: relative;
+}
+.wf-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-ink);
+  font-weight: 700;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.wf-step.active .wf-step-num {
+  background: var(--color-brand, #0f766e);
+  color: #ffffff;
+}
+.wf-step.completed .wf-step-num {
+  background: #10b981;
+  color: #ffffff;
+}
+.wf-step-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.wf-step-role {
+  font-size: 10.5px;
+  color: var(--color-ink-muted);
+}
+.wf-arrow {
+  color: var(--color-border);
+  font-weight: 800;
+  font-size: 16px;
+}
+.stage-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+}
+.stage-tab {
+  background: none;
+  border: 1px solid transparent;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--color-ink-muted);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.stage-tab:hover {
+  background: var(--color-bg-light);
+  color: var(--color-ink);
+}
+.stage-tab.active {
+  background: var(--color-brand, #0f766e);
+  color: #ffffff;
+  border-color: var(--color-brand, #0f766e);
+}
+.ocr-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.ocr-field-card {
+  background: var(--color-bg-light, #f8fafc);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+.ocr-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 3px;
+}
+.ocr-field-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+  word-break: break-word;
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Statutory Documents &amp; OCR Governance Workflow</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Workflow Architecture Diagram -->
+      <div class="workflow-stepper">
+        <div class="wf-step completed">
+          <div class="wf-step-num">1</div>
+          <div class="wf-step-title">Upload &amp; OCR</div>
+          <div class="wf-step-role">Inspector / Officer</div>
+        </div>
+        <div class="wf-arrow">&rarr;</div>
+        <div class="wf-step active">
+          <div class="wf-step-num">2</div>
+          <div class="wf-step-title">Safety Review</div>
+          <div class="wf-step-role">Safety Officer / Manager</div>
+        </div>
+        <div class="wf-arrow">&rarr;</div>
+        <div class="wf-step">
+          <div class="wf-step-num">3</div>
+          <div class="wf-step-title">Mine Approval</div>
+          <div class="wf-step-role">Mine Manager / Admin</div>
+        </div>
+        <div class="wf-arrow">&rarr;</div>
+        <div class="wf-step">
+          <div class="wf-step-num">4</div>
+          <div class="wf-step-title">Regulatory Verification</div>
+          <div class="wf-step-role">Regulatory Officer / Admin</div>
+        </div>
+        <div class="wf-arrow">&rarr;</div>
+        <div class="wf-step">
+          <div class="wf-step-num">5</div>
+          <div class="wf-step-title">Compliance &amp; Audit</div>
+          <div class="wf-step-role">Corporate / Dashboard</div>
+        </div>
+      </div>
+
+      <!-- Documents KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Documents</div>
+          <div class="kpi-value" id="kpi-total-docs">--</div>
+          <div class="kpi-hint">Uploaded &amp; OCR indexed</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Pending Review</div>
+          <div class="kpi-value highlight" id="kpi-pending-docs">--</div>
+          <div class="kpi-hint">Awaiting Safety / Manager check</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Manager Approved</div>
+          <div class="kpi-value positive" id="kpi-approved-docs">--</div>
+          <div class="kpi-hint">Certified at mine level</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Regulatory Verified</div>
+          <div class="kpi-value" id="kpi-verified-docs" style="color:#0284c7;">--</div>
+          <div class="kpi-hint">DGMS &amp; statutory cleared</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Breaches / Expired</div>
+          <div class="kpi-value critical" id="kpi-violations-docs">--</div>
+          <div class="kpi-hint">Corrective action active</div>
+        </div>
+      </div>
+
+      <!-- Stage Filter Tabs -->
+      <div class="stage-tabs">
+        <button class="stage-tab active" data-stage="">All Documents (<span id="count-tab-all">0</span>)</button>
+        <button class="stage-tab" data-stage="PENDING_REVIEW">Pending Review (<span id="count-tab-pending">0</span>)</button>
+        <button class="stage-tab" data-stage="REVIEWED">Safety Reviewed (<span id="count-tab-reviewed">0</span>)</button>
+        <button class="stage-tab" data-stage="APPROVED">Manager Approved (<span id="count-tab-approved">0</span>)</button>
+        <button class="stage-tab" data-stage="REGULATORY_VERIFIED">Regulatory Verified (<span id="count-tab-verified">0</span>)</button>
+        <button class="stage-tab" data-stage="VIOLATION_FLAGGED">Flagged Breaches (<span id="count-tab-violations">0</span>)</button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <input type="text" id="search-doc" placeholder="Search cert no, document type, mine, inspector, regulatory ref..." style="min-width:320px; padding:7px 12px; font-size:13.5px;" />
+        <select id="filter-status">
+          <option value="">All Validity</option>
+          <option value="VALID">Valid</option>
+          <option value="EXPIRING_SOON">Expiring Soon (&le;30d)</option>
+          <option value="EXPIRED">Expired</option>
+        </select>
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <div class="spacer"></div>
+        <button id="upload-doc-btn" class="btn btn-primary hidden">+ Upload Statutory Document</button>
+      </div>
+
+      <!-- Expiry Alerts Banner -->
+      <div class="card" style="margin-bottom: 20px;">
+        <div class="card-header"><h3>Statutory Alerts &amp; Critical Breaches</h3></div>
+        <div class="card-body" id="expiry-reminders-container" style="display:flex; flex-direction:column; gap:8px;">
+          <p class="hint">No critical document violations or pending expirations.</p>
+        </div>
+      </div>
+
+      <!-- Documents Table -->
+      <div class="card" style="overflow-x: auto; padding: 0;">
+        <table class="data-table" style="min-width: 1100px; width: 100%;">
+          <thead>
+            <tr>
+              <th style="min-width: 140px;">Certificate / Report ID</th>
+              <th style="min-width: 160px;">Document Type</th>
+              <th style="min-width: 140px;">Mine Site &amp; Code</th>
+              <th style="min-width: 110px;">Inspection Date</th>
+              <th style="min-width: 130px;">Inspector</th>
+              <th style="min-width: 150px;">Risk &amp; Compliance</th>
+              <th style="min-width: 130px;">Workflow Stage</th>
+              <th style="min-width: 90px;">Validity</th>
+              <th style="min-width: 250px; text-align: right; padding-right: 16px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="documents-table-body">
+            <tr><td colspan="9" class="state-panel">Loading statutory governance documents...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Upload Document Modal -->
+<div class="modal-backdrop hidden" id="document-modal">
+  <div class="modal" style="max-width: 600px;">
+    <div class="modal-header">
+      <h3 id="upload-modal-title">Upload Statutory Certificate &amp; Run AI OCR</h3>
+      <button type="button" class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <form id="document-form" enctype="multipart/form-data">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="doc-mine">Mine Association</label>
+          <select id="doc-mine">
+            <option value="">No specific mine (General / HQ Certificate)</option>
+          </select>
+          <p class="hint">If unassigned, AI OCR extracts the exact mine name from the certificate text.</p>
+        </div>
+        <div class="form-group">
+          <label for="doc-contractor">Contractor Association (Optional)</label>
+          <select id="doc-contractor">
+            <option value="">No Contractor (CIL Direct / Departmental)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="doc-file">Select Document / Certificate File (PNG, JPG, JPEG)</label>
+          <input type="file" id="doc-file" accept="image/*,application/pdf" required />
+          <p class="hint">AI Multimodal OCR parses all 13 fields: Mine Name, Code, Dates, Inspector, Violations, Risk, and Corrective Actions.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="modal-save">Upload &amp; Run AI OCR</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Review OCR Findings Modal (Safety Officer / Mine Manager / Admin) -->
+<div class="modal-backdrop hidden" id="review-modal">
+  <div class="modal" style="max-width: 700px;">
+    <div class="modal-header">
+      <h3 id="review-modal-title">Review &amp; Verify AI OCR Findings</h3>
+      <button type="button" class="modal-close" id="review-modal-close">&times;</button>
+    </div>
+    <form id="review-form">
+      <input type="hidden" id="rev-doc-id" />
+      <div class="modal-body">
+        <p class="hint" style="margin-bottom: 14px;">Review the AI-extracted inspection findings. Adjust any parameters before confirming and escalating to Manager Approval.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="rev-compliance">Compliance Status</label>
+            <select id="rev-compliance">
+              <option value="COMPLIANT">COMPLIANT (No critical breaches)</option>
+              <option value="NON_COMPLIANT">NON-COMPLIANT (Action Required)</option>
+              <option value="CONDITIONAL">CONDITIONAL (Subject to re-audit)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="rev-risk">Assessed Risk Level</label>
+            <select id="rev-risk">
+              <option value="LOW">LOW</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="HIGH">HIGH</option>
+              <option value="CRITICAL">CRITICAL</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rev-violations">Identified Violations / Observations</label>
+          <textarea id="rev-violations" rows="2" placeholder="Detail any statutory violations or hazards found..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="rev-action">Mandated Corrective Action Plan</label>
+            <input type="text" id="rev-action" placeholder="e.g. Provide PPE and clear emergency exit sector 4" />
+          </div>
+          <div class="form-group">
+            <label for="rev-due-date">Resolution Due Date</label>
+            <input type="date" id="rev-due-date" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="rev-notes">Safety Officer Review Notes</label>
+          <textarea id="rev-notes" rows="2" placeholder="Add verification commentary and escalation notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="review-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="review-modal-submit">Confirm Review &amp; Mark Reviewed</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Regulatory Verification & Violation Modal (Regulatory Officer / Admin) -->
+<div class="modal-backdrop hidden" id="regulatory-modal">
+  <div class="modal" style="max-width: 650px;">
+    <div class="modal-header">
+      <h3 id="regulatory-modal-title">Regulatory Verification (DGMS Oversight)</h3>
+      <button type="button" class="modal-close" id="regulatory-modal-close">&times;</button>
+    </div>
+    <form id="regulatory-form">
+      <input type="hidden" id="reg-doc-id" />
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Regulatory Decision</label>
+          <div style="display:flex; gap:16px; margin-top:6px;">
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+              <input type="radio" name="reg_action" value="VERIFY" checked /> 
+              <span>Verify &amp; Clear Statutory Compliance</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+              <input type="radio" name="reg_action" value="FLAG_VIOLATION" /> 
+              <span style="color:var(--color-critical); font-weight:600;">Flag Violation / Issue DGMS Notice</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="reg-notes">Regulatory Auditor Findings &amp; Statutory References</label>
+          <textarea id="reg-notes" rows="3" placeholder="Enter DGMS regulatory compliance notes, statutory orders, or clearance numbers..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="regulatory-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="regulatory-modal-submit">Submit Regulatory Verification</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Flag Violation & Create Action Modal -->
+<div class="modal-backdrop hidden" id="flag-violation-modal">
+  <div class="modal" style="max-width: 650px;">
+    <div class="modal-header">
+      <h3>Create Live Violation &amp; Corrective Action from Document</h3>
+      <button type="button" class="modal-close" id="flag-violation-close">&times;</button>
+    </div>
+    <form id="flag-violation-form">
+      <input type="hidden" id="fv-doc-id" />
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="fv-title">Violation Title *</label>
+          <input type="text" id="fv-title" required placeholder="e.g. Non-compliant PPE &amp; Blocked Emergency Exit" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fv-severity">Severity Rating</label>
+            <select id="fv-severity">
+              <option value="CRITICAL">CRITICAL</option>
+              <option value="HIGH" selected>HIGH</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="LOW">LOW</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fv-due-date">Corrective Action Due Date</label>
+            <input type="date" id="fv-due-date" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="fv-desc">Violation Description / Document Evidence *</label>
+          <textarea id="fv-desc" rows="2" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fv-action">Assigned Corrective Action Plan *</label>
+          <textarea id="fv-action" rows="2" required placeholder="Detail required safety measures to rectify..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="flag-violation-cancel">Cancel</button>
+        <button type="submit" class="btn btn-danger" id="flag-violation-submit">Create Violation &amp; Trigger Alert</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 13-Field OCR Card Inspector Modal -->
+<div class="modal-backdrop hidden" id="ocr-modal">
+  <div class="modal" style="max-width: 800px;">
+    <div class="modal-header">
+      <h3 id="ocr-modal-title">AI OCR 13-Field Extraction Inspector</h3>
+      <button type="button" class="modal-close" id="ocr-close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <!-- 13 Extracted Fields Card Grid -->
+      <div class="ocr-field-grid">
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">1. Mine Name</div>
+          <div class="ocr-field-value" id="ocr-m-name">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">2. Mine Code</div>
+          <div class="ocr-field-value mono" id="ocr-m-code">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">3. Document Type</div>
+          <div class="ocr-field-value" id="ocr-m-type">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">4. Inspection Date</div>
+          <div class="ocr-field-value" id="ocr-m-ins-date">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">5. Inspector Name</div>
+          <div class="ocr-field-value" id="ocr-m-inspector">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">6. Compliance Status</div>
+          <div class="ocr-field-value" id="ocr-m-compliance">-</div>
+        </div>
+        <div class="ocr-field-card" style="grid-column: span 2;">
+          <div class="ocr-field-label">7. Violation Details</div>
+          <div class="ocr-field-value" id="ocr-m-violations">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">8. Risk Level</div>
+          <div class="ocr-field-value" id="ocr-m-risk">-</div>
+        </div>
+        <div class="ocr-field-card" style="grid-column: span 2;">
+          <div class="ocr-field-label">9. Corrective Action</div>
+          <div class="ocr-field-value" id="ocr-m-action">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">10. Due Date</div>
+          <div class="ocr-field-value" id="ocr-m-due">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">11. Certificate Number</div>
+          <div class="ocr-field-value mono" id="ocr-m-cert">-</div>
+        </div>
+        <div class="ocr-field-card">
+          <div class="ocr-field-label">12. Expiry Date</div>
+          <div class="ocr-field-value" id="ocr-m-expiry">-</div>
+        </div>
+        <div class="ocr-field-card" style="grid-column: span 2;">
+          <div class="ocr-field-label">13. Regulatory Reference</div>
+          <div class="ocr-field-value" id="ocr-m-reg-ref">-</div>
+        </div>
+      </div>
+
+      <!-- TF-IDF Vectorized Category Breakdown & OCR Details -->
+      <div class="form-group" style="margin-top: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label style="margin:0; font-weight:700;">TF-IDF Vectorized Category Breakdown &amp; Extracted Information Table</label>
+          <span class="badge badge-info" style="font-size:11px;">Scikit-Learn TF-IDF Engine</span>
+        </div>
+        <div style="overflow:auto; border:1px solid var(--color-border); border-radius:8px; background:#fff;">
+          <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+            <thead style="background:var(--color-bg-light); border-bottom:2px solid var(--color-border);">
+              <tr>
+                <th style="padding:10px 12px; text-align:left; min-width:140px;">Category</th>
+                <th style="padding:10px 12px; text-align:left; min-width:130px;">TF-IDF Relevance</th>
+                <th style="padding:10px 12px; text-align:left; min-width:180px;">Matched Keywords / Terms</th>
+                <th style="padding:10px 12px; text-align:left; min-width:240px;">Extracted Information</th>
+              </tr>
+            </thead>
+            <tbody id="ocr-categorized-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Raw OCR Transcript -->
+      <div class="form-group">
+        <label>Verbatim OCR Raw Text Transcript</label>
+        <textarea id="ocr-raw-text" readonly style="height: 160px; background: var(--color-bg-light); font-family: monospace; font-size: 12px; line-height: 1.5;"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="ocr-copy-btn">Copy Transcript</button>
+      <button type="button" class="btn btn-primary" id="ocr-back">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Document Modal -->
+<div class="modal-backdrop hidden" id="edit-document-modal">
+  <div class="modal" style="max-width: 680px;">
+    <div class="modal-header">
+      <h3 id="edit-modal-title">Edit Document Record</h3>
+      <button type="button" class="modal-close" id="edit-modal-close">&times;</button>
+    </div>
+    <form id="edit-document-form">
+      <input type="hidden" id="edit-doc-id" />
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-cert-no">Certificate / Reference Number *</label>
+            <input type="text" id="edit-cert-no" required />
+          </div>
+          <div class="form-group">
+            <label for="edit-doc-type">Document Type *</label>
+            <input type="text" id="edit-doc-type" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-doc-mine">Mine Association</label>
+            <select id="edit-doc-mine"></select>
+          </div>
+          <div class="form-group">
+            <label for="edit-doc-contractor">Contractor Association</label>
+            <select id="edit-doc-contractor"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-inspector">Inspector Name</label>
+            <input type="text" id="edit-inspector" />
+          </div>
+          <div class="form-group">
+            <label for="edit-ins-date">Inspection Date</label>
+            <input type="date" id="edit-ins-date" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-expiry-date">Expiry Date</label>
+            <input type="date" id="edit-expiry-date" />
+          </div>
+          <div class="form-group">
+            <label for="edit-status">Validity Status</label>
+            <select id="edit-status">
+              <option value="VALID">VALID</option>
+              <option value="EXPIRING_SOON">EXPIRING SOON</option>
+              <option value="EXPIRED">EXPIRED</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="edit-ocr-text">OCR Text / Notes</label>
+          <textarea id="edit-ocr-text" rows="3" style="font-family:monospace; font-size:12px;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="edit-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="edit-modal-save">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/documents.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

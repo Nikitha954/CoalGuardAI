@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Grievance Redressal — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Worker Grievance Redressal Portal</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Grievance Redressal KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Grievances</div>
+          <div class="kpi-value" id="kpi-total-g">--</div>
+          <div class="kpi-hint">All time filed cases</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Pending Review</div>
+          <div class="kpi-value warning" id="kpi-submitted-g">--</div>
+          <div class="kpi-hint">Awaiting officer assignment</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">In Active Investigation</div>
+          <div class="kpi-value highlight" id="kpi-inreview-g">--</div>
+          <div class="kpi-hint">Assigned to safety/mine manager</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Resolved &amp; Closed</div>
+          <div class="kpi-value positive" id="kpi-resolved-g">--</div>
+          <div class="kpi-hint">Remedied with documented notes</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <select id="filter-category">
+          <option value="">All Categories</option>
+          <option value="Safety">Safety &amp; Hazards</option>
+          <option value="Equipment">Equipment &amp; HEMM</option>
+          <option value="Compensation">Compensation &amp; Overtime</option>
+          <option value="Working Conditions">Working Conditions &amp; Rest Shelters</option>
+          <option value="Harassment">Harassment / Discrimination</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="SUBMITTED">Submitted</option>
+          <option value="IN_REVIEW">In Review</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="ESCALATED">Escalated</option>
+          <option value="CLOSED">Closed</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="btn-file-grievance" class="btn btn-primary">+ File New Grievance</button>
+      </div>
+
+      <!-- Grievances Table -->
+      <div class="card" style="overflow-x: auto; padding: 0;">
+        <table class="data-table" style="min-width: 1050px; width: 100%;">
+          <thead>
+            <tr>
+              <th style="min-width: 60px;">ID</th>
+              <th style="min-width: 140px;">Worker</th>
+              <th style="min-width: 140px;">Mine Site</th>
+              <th style="min-width: 120px;">Category</th>
+              <th style="min-width: 260px;">Description &amp; Notes</th>
+              <th style="min-width: 100px;">Status</th>
+              <th style="min-width: 130px;">Assigned To</th>
+              <th style="min-width: 100px;">Filed Date</th>
+              <th style="min-width: 180px; text-align: right; padding-right: 16px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="grievances-table-body">
+            <tr><td colspan="9" class="state-panel">Loading grievances...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Submit Grievance Modal -->
+<div class="modal-backdrop hidden" id="grievance-modal">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <h3>File Worker Grievance</h3>
+      <button class="modal-close" id="grievance-modal-close">&times;</button>
+    </div>
+    <form id="grievance-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="g-mine">Mine Site</label>
+            <select id="g-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="g-worker">Worker (Optional / Anonymous)</label>
+            <select id="g-worker"><option value="">Anonymous Worker Submission</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="g-category">Category</label>
+            <select id="g-category" required>
+              <option value="Safety">Safety &amp; Hazards</option>
+              <option value="Equipment">Equipment &amp; HEMM</option>
+              <option value="Compensation">Compensation &amp; Overtime</option>
+              <option value="Working Conditions">Working Conditions &amp; Rest Shelters</option>
+              <option value="Harassment">Harassment / Discrimination</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="g-desc">Grievance Description</label>
+          <textarea id="g-desc" rows="4" required placeholder="Provide clear details regarding the safety concern, equipment defect, or labour issue..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="grievance-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Grievance</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Assign Grievance Modal -->
+<div class="modal-backdrop hidden" id="assign-modal">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <h3>Assign Officer to Grievance</h3>
+      <button class="modal-close" id="assign-modal-close">&times;</button>
+    </div>
+    <form id="assign-form">
+      <input type="hidden" id="assign-g-id" />
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="assign-officer">Assigned Safety / Mine Officer</label>
+          <select id="assign-officer" required></select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="assign-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Assign Case</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Resolve Grievance Modal -->
+<div class="modal-backdrop hidden" id="resolve-modal">
+  <div class="modal" style="max-width:550px;">
+    <div class="modal-header">
+      <h3>Resolve Grievance</h3>
+      <button class="modal-close" id="resolve-modal-close">&times;</button>
+    </div>
+    <form id="resolve-form">
+      <input type="hidden" id="resolve-g-id" />
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="resolve-notes">Detailed Resolution Notes &amp; Actions Taken</label>
+          <textarea id="resolve-notes" rows="4" required placeholder="Document the corrective measures taken to address this worker grievance..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="resolve-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Mark as Resolved</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Escalate Grievance Modal -->
+<div class="modal-backdrop hidden" id="escalate-modal">
+  <div class="modal" style="max-width:550px;">
+    <div class="modal-header">
+      <h3 style="color:var(--color-critical);">Escalate Grievance to Corporate</h3>
+      <button class="modal-close" id="escalate-modal-close">&times;</button>
+    </div>
+    <form id="escalate-form">
+      <input type="hidden" id="escalate-g-id" />
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="escalate-reason">Reason for Executive / Regulatory Escalation</label>
+          <textarea id="escalate-reason" rows="3" required placeholder="State why this grievance cannot be resolved locally at the mine site..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="escalate-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" style="background:var(--color-critical);">Escalate Case</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/grievances.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

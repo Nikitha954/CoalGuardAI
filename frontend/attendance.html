@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Attendance & Workforce — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Workforce &amp; Attendance Tracking</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Attendance KPIs -->
+      <div class="kpi-grid" id="attendance-kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Active Workers</div>
+          <div class="kpi-value" id="kpi-total-workers">--</div>
+          <div class="kpi-hint">Registered across active mines</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Present Today</div>
+          <div class="kpi-value positive" id="kpi-present-count">--</div>
+          <div class="kpi-hint">Shift 1, 2 &amp; General</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Absent / On Leave</div>
+          <div class="kpi-value warning" id="kpi-absent-count">--</div>
+          <div class="kpi-hint">Unexcused &amp; approved leaves</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Attendance Rate</div>
+          <div class="kpi-value highlight" id="kpi-rate">--%</div>
+          <div class="kpi-hint">DGMS statutory minimum: 80%</div>
+        </div>
+      </div>
+
+      <!-- Filters & Actions Toolbar -->
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <select id="filter-contractor"><option value="">All Contractors / Direct</option></select>
+        <input type="date" id="filter-date" style="padding: 8px 12px; font-size:13.5px;" />
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="PRESENT">Present</option>
+          <option value="ABSENT">Absent</option>
+          <option value="LEAVE">On Leave</option>
+          <option value="HALF_DAY">Half Day</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="btn-add-worker" class="btn btn-secondary hidden">+ Register Worker</button>
+        <button id="btn-mark-attendance" class="btn btn-primary hidden" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Mark Attendance
+        </button>
+      </div>
+
+      <!-- Attendance Records Table -->
+      <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Daily Attendance Roster</h3>
+          <span class="hint" id="table-subtitle">Showing latest records</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Worker Code</th>
+              <th>Full Name</th>
+              <th>Designation</th>
+              <th>Mine Site</th>
+              <th>Contractor</th>
+              <th>Shift</th>
+              <th>Overtime</th>
+              <th>Date</th>
+              <th>Status</th>
+              <th>Marked By</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-table-body">
+            <tr><td colspan="10" class="state-panel">Loading attendance roster...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Mark Attendance Modal -->
+<div class="modal-backdrop hidden" id="mark-modal">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <h3 id="mark-modal-title">Record Attendance</h3>
+      <button class="modal-close" id="mark-modal-close">&times;</button>
+    </div>
+    <form id="mark-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="att-mine">Mine Site</label>
+            <select id="att-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="att-date">Attendance Date</label>
+            <input type="date" id="att-date" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="att-worker">Worker (Select Individual)</label>
+            <select id="att-worker" required></select>
+          </div>
+          <div class="form-group">
+            <label for="att-shift">Shift</label>
+            <select id="att-shift">
+              <option value="GENERAL">General Shift (08:00 - 17:00)</option>
+              <option value="SHIFT_1">Shift 1 (06:00 - 14:00)</option>
+              <option value="SHIFT_2">Shift 2 (14:00 - 22:00)</option>
+              <option value="SHIFT_3">Shift 3 (22:00 - 06:00)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="att-status">Status</label>
+            <select id="att-status" required>
+              <option value="PRESENT">PRESENT</option>
+              <option value="ABSENT">ABSENT</option>
+              <option value="LEAVE">APPROVED LEAVE</option>
+              <option value="HALF_DAY">HALF DAY</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="att-ot">Overtime Hours</label>
+            <input type="number" step="0.5" id="att-ot" value="0.0" min="0" max="8" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="mark-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="mark-modal-save">Submit Attendance</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Register Worker Modal -->
+<div class="modal-backdrop hidden" id="worker-modal">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <h3>Register Mine Worker / Contract Labour</h3>
+      <button class="modal-close" id="worker-modal-close">&times;</button>
+    </div>
+    <form id="worker-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="w-mine">Mine Site</label>
+            <select id="w-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="w-code">Worker Code</label>
+            <input type="text" id="w-code" required placeholder="e.g. W-GEV-105" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="w-name">Full Name</label>
+            <input type="text" id="w-name" required placeholder="e.g. Rajesh Kumar" />
+          </div>
+          <div class="form-group">
+            <label for="w-desig">Designation</label>
+            <input type="text" id="w-desig" required placeholder="e.g. Shovel Operator / Dumper Driver" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="w-contractor">Contractor (Optional)</label>
+            <select id="w-contractor"><option value="">Direct CIL Employee</option></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="worker-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Worker</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/attendance.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+/* =====================================================================
+   Dashboard grid, chart containers, GIS map container
+   ===================================================================== */
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.dash-grid.full { grid-template-columns: 1fr; }
+
+.chart-wrap { padding: 16px 20px 20px 20px; }
+.chart-wrap canvas { max-height: 260px; }
+
+#mines-map {
+  height: 420px;
+  width: 100%;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  position: relative;
+  z-index: 1;
+}
+
+#inspections-map {
+  height: 320px;
+  width: 100%;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  position: relative;
+  z-index: 1;
+}
+
+.legend-row {
+  display: flex;
+  gap: 16px;
+  padding: 10px 20px;
+  font-size: 12px;
+  color: var(--color-ink-muted);
+  border-top: 1px solid var(--color-border);
+}
+.legend-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+.legend-dot.low { background: var(--color-low); }
+.legend-dot.medium { background: var(--color-medium); }
+.legend-dot.high { background: var(--color-high); }
+.legend-dot.critical { background: var(--color-critical); }
+
+.section-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 28px 0 14px 0;
+}
+.section-title-row h2 { font-size: 15px; margin: 0; }
+.section-title-row .hint { font-size: 12px; color: var(--color-ink-muted); }

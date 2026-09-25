@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Production &amp; HEMM Operations — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Production &amp; Heavy Machinery (HEMM) Analytics</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Production KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Coal Output</div>
+          <div class="kpi-value" id="kpi-prod-total">-- T</div>
+          <div class="kpi-hint">MT aggregate across active sites</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Target Fulfillment</div>
+          <div class="kpi-value positive" id="kpi-target-pct">--%</div>
+          <div class="kpi-hint">Vs statutory monthly quota</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Overburden Removal</div>
+          <div class="kpi-value highlight" id="kpi-ob-total">-- m&sup3;</div>
+          <div class="kpi-hint">Stripping ratio compliance</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">HEMM Availability</div>
+          <div class="kpi-value" id="kpi-hemm-avail">--%</div>
+          <div class="kpi-hint">Shovel / Dumper fleet uptime</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <div class="spacer"></div>
+        <button id="btn-log-prod" class="btn btn-primary hidden">+ Log Daily Production &amp; Fleet</button>
+      </div>
+
+      <!-- Production Table -->
+      <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Daily Extraction &amp; Heavy Machinery Telemetry</h3>
+          <span class="hint">Anomalies checked via Isolation Forest ML</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mine Site</th>
+              <th>Date</th>
+              <th>Production (T)</th>
+              <th>Target (T)</th>
+              <th>Fulfillment</th>
+              <th>OB Stripped (m&sup3;)</th>
+              <th>Workers</th>
+              <th>HEMM Fleet %</th>
+              <th>AI Status</th>
+            </tr>
+          </thead>
+          <tbody id="prod-table-body">
+            <tr><td colspan="10" class="state-panel">Loading production telemetry...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Log Production Modal -->
+<div class="modal-backdrop hidden" id="prod-modal">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <h3>Record Operational &amp; Production Telemetry</h3>
+      <button class="modal-close" id="prod-modal-close">&times;</button>
+    </div>
+    <form id="prod-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-mine">Mine Site</label>
+            <select id="prod-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="prod-date">Record Date</label>
+            <input type="date" id="prod-date" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-actual">Actual Coal Produced (Tonnes)</label>
+            <input type="number" step="1" id="prod-actual" required placeholder="18500" />
+          </div>
+          <div class="form-group">
+            <label for="prod-target">Daily Target (Tonnes)</label>
+            <input type="number" step="1" id="prod-target" required placeholder="20000" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-ob">Overburden Stripped (m&sup3;)</label>
+            <input type="number" step="1" id="prod-ob" required placeholder="45000" />
+          </div>
+          <div class="form-group">
+            <label for="prod-workers">Active Worker Headcount</label>
+            <input type="number" id="prod-workers" required placeholder="320" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="prod-fleet">Equipment / HEMM Availability %</label>
+            <input type="number" step="0.5" id="prod-fleet" value="88.0" min="0" max="100" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="prod-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Production Log</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/production.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

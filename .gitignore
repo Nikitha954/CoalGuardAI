@@ -1,0 +1,31 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment files
+.env
+backend/.env
+ai-service/.env
+*.env.local
+
+# Uploads & temporary media
+backend/uploads/*
+!backend/uploads/.gitkeep
+uploads/
+
+# Node modules
+node_modules/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

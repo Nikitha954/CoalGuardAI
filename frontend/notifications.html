@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notifications — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Notifications &amp; Alerts</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar">
+        <select id="filter-read-status">
+          <option value="ALL">All Notifications</option>
+          <option value="UNREAD" selected>Unread Only</option>
+          <option value="READ">Read Only</option>
+        </select>
+        <div class="spacer"></div>
+      </div>
+
+      <div class="card">
+        <div id="notifications-list" style="padding: 10px;">
+          <p class="state-panel">Loading notifications...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/notifications-page.js"></script>
+<script src="js/pwa.js"></script>
+</body>
+</html>

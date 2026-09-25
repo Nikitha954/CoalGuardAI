@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Governance Dashboard</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <div class="kpi-grid" id="kpi-grid">
+        <div class="state-panel">Loading dashboard...</div>
+      </div>
+
+      <!-- GIS Map Section -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Geographical Mine Risk &amp; Compliance Map</h3>
+          <span class="hint">Live GPS Telemetry &amp; AI Risk Classification</span>
+        </div>
+        <div id="mines-map"></div>
+        <div class="legend-row">
+          <span><span class="legend-dot low"></span>Low Risk (0-30)</span>
+          <span><span class="legend-dot medium"></span>Medium Risk (31-60)</span>
+          <span><span class="legend-dot high"></span>High Risk (61-80)</span>
+          <span><span class="legend-dot critical"></span>Critical Risk (81-100)</span>
+        </div>
+      </div>
+
+      <div class="section-title-row">
+        <h2>AI Risk &amp; Compliance Analytics</h2>
+      </div>
+
+      <!-- Row 1: Compliance Trend and Violations by Category -->
+      <div class="dash-grid" style="margin-bottom:16px;">
+        <div class="card chart-wrap">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:14px; font-weight:600; color:var(--color-ink);">Compliance Trend (%)</h3>
+          <canvas id="chart-compliance-trend"></canvas>
+        </div>
+        <div class="card chart-wrap">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:14px; font-weight:600; color:var(--color-ink);">Violations by Category</h3>
+          <canvas id="chart-violations-cat"></canvas>
+        </div>
+      </div>
+
+      <!-- Row 2: Risk Distribution and Corrective Action Statuses -->
+      <div class="dash-grid" style="margin-bottom:16px;">
+        <div class="card chart-wrap">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:14px; font-weight:600; color:var(--color-ink);">Mines Risk Score Rankings</h3>
+          <canvas id="chart-mine-ranks"></canvas>
+        </div>
+        <div class="card chart-wrap">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:14px; font-weight:600; color:var(--color-ink);">Corrective Actions Status</h3>
+          <canvas id="chart-corrective-status"></canvas>
+        </div>
+      </div>
+
+      <!-- Row 3: Inspections and Incidents Trend -->
+      <div class="dash-grid" style="margin-bottom:16px;">
+        <div class="card chart-wrap">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:14px; font-weight:600; color:var(--color-ink);">Inspections Trend</h3>
+          <canvas id="chart-inspections-trend"></canvas>
+        </div>
+        <div class="card chart-wrap">
+          <h3 style="margin-top:0; margin-bottom:12px; font-size:14px; font-weight:600; color:var(--color-ink);">Risk Distribution</h3>
+          <canvas id="chart-risk-dist"></canvas>
+        </div>
+      </div>
+
+      <div class="section-title-row">
+        <h2>Mines Overview</h2>
+        <span class="hint">Showing up to 8 mines &middot; view all on the Mines page</span>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mine</th>
+              <th>Subsidiary</th>
+              <th>State</th>
+              <th>Type</th>
+              <th>Open Violations</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="mines-preview-body">
+            <tr><td colspan="6" class="state-panel">Loading mines...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-title-row">
+        <h2>Platform Status</h2>
+      </div>
+      <div class="card card-body" style="margin-bottom:20px;">
+        <p style="margin:0; color: var(--color-ink-muted); font-size: 13.5px; line-height:1.6;">
+          <strong>Centralized governance live:</strong> authentication, RBAC, mine management, field inspections, violations, and corrective action workflows are fully operational. Risk scoring, Isolation Forest anomalies, and simulator telemetry controls are linked on the sidebar.
+        </p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<!-- Chart.js & Leaflet GIS CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

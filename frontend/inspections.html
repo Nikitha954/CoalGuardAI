@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inspections — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Inspections Tracking</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- GIS Inspections Map -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Geo-Tagged Field Inspections Map</h3>
+          <span class="hint">GPS Field Locations &amp; Status Pins</span>
+        </div>
+        <div id="inspections-map" style="height:320px; width:100%;"></div>
+        <div class="legend-row">
+          <span><span class="legend-dot" style="background:#10b981;"></span>Approved</span>
+          <span><span class="legend-dot" style="background:#3b82f6;"></span>Reviewed</span>
+          <span><span class="legend-dot" style="background:#f59e0b;"></span>Submitted</span>
+          <span><span class="legend-dot" style="background:#64748b;"></span>Draft</span>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="DRAFT">Draft</option>
+          <option value="SUBMITTED">Submitted</option>
+          <option value="REVIEWED">Reviewed</option>
+          <option value="APPROVED">Approved</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="conduct-inspection-btn" class="btn btn-primary hidden">+ Conduct Inspection</button>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mine</th>
+              <th>Inspection Type</th>
+              <th>Inspector</th>
+              <th>Date &amp; Time</th>
+              <th>GPS Coordinates</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inspections-table-body">
+            <tr><td colspan="7" class="state-panel">Loading inspections...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Conduct Inspection Modal -->
+<div class="modal-backdrop hidden" id="inspection-modal">
+  <div class="modal" style="max-width:800px;">
+    <div class="modal-header">
+      <h3>Conduct Field Inspection</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <form id="inspection-form" enctype="multipart/form-data">
+      <div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ins-mine">Target Mine</label>
+            <select id="ins-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="ins-type">Inspection Type</label>
+            <select id="ins-type" required>
+              <option value="Safety Audit">Safety Audit</option>
+              <option value="Environmental Compliance">Environmental Compliance</option>
+              <option value="Labour Standard Check">Labour Standard Check</option>
+              <option value="Production Verification">Production Verification</option>
+              <option value="General Inspection">General Inspection</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="ins-lat">GPS Latitude</label>
+            <input type="number" step="0.000001" id="ins-lat" required />
+          </div>
+          <div class="form-group">
+            <label for="ins-lng">GPS Longitude</label>
+            <input type="number" step="0.000001" id="ins-lng" required />
+          </div>
+          <div class="form-group" style="justify-content: flex-end; display: flex; align-items: flex-end;">
+            <button type="button" class="btn btn-secondary" id="btn-detect-gps" style="width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Capture GPS
+            </button>
+          </div>
+        </div>
+
+        <h4 style="margin-top:20px; margin-bottom:10px; border-bottom:1px solid var(--color-border); padding-bottom:4px;">
+          Compliance Checklist
+        </h4>
+        <div id="checklist-container" style="margin-bottom:20px;">
+          <p class="hint">Loading checklist rules...</p>
+        </div>
+
+        <h4 style="margin-top:20px; margin-bottom:10px; border-bottom:1px solid var(--color-border); padding-bottom:4px;">
+          Observation &amp; Evidence (Optional Violation)
+        </h4>
+        <div class="form-group">
+          <div class="form-label-row">
+            <label for="obs-description">Observation Description</label>
+            <button type="button" class="btn-desc-mic" data-target="obs-description" title="Speak to dictate in selected language">
+              <span class="mic-icon" style="display:inline-flex; align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> <span class="mic-status-text">Voice Input</span>
+            </button>
+          </div>
+          <textarea id="obs-description" placeholder="Describe any specific compliance breach detected..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="obs-category">Category</label>
+            <select id="obs-category"></select>
+          </div>
+          <div class="form-group">
+            <label for="obs-severity">Severity</label>
+            <select id="obs-severity">
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="CRITICAL">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="obs-evidence">Evidence Photo</label>
+          <input type="file" id="obs-evidence" accept="image/*" />
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <button type="button" class="btn btn-secondary" id="btn-ai-analyze-draft" style="width:100%; font-weight:600; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            Analyze Observation with AI
+          </button>
+        </div>
+
+        <!-- AI Draft Analysis Output Panel -->
+        <div class="card card-body hidden" id="ai-analysis-panel" style="margin-top: 15px; border-left: 4px solid var(--color-primary); background: var(--color-bg-light); padding: 14px;">
+          <h4 style="margin-top: 0; display: flex; align-items: center; gap: 8px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            AI Compliance Analysis (Draft)
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 12px; font-size: 13px;">
+            <div><strong>Severity:</strong> <span id="ai-severity">-</span></div>
+            <div><strong>Risk Level:</strong> <span id="ai-risk-level">-</span></div>
+            <div><strong>Risk Score:</strong> <span id="ai-risk-score">-</span>/100</div>
+            <div><strong>Recurring Issue:</strong> <span id="ai-recurring-issue">-</span></div>
+            <div><strong>Confidence:</strong> <span id="ai-confidence">-</span>%</div>
+          </div>
+          <div style="font-size: 13.5px; line-height: 1.5; color: var(--color-ink); margin-bottom: 8px;">
+            <strong>Summary:</strong> <span id="ai-summary">-</span>
+          </div>
+          <div style="font-size: 13.5px; line-height: 1.5; color: var(--color-ink); margin-bottom: 8px;">
+            <strong>AI Recommended Action:</strong> <span id="ai-recommended-action">-</span>
+          </div>
+          <div style="font-size: 13.5px; line-height: 1.5; color: var(--color-ink-muted); margin-bottom: 8px; font-style: italic;">
+            <strong>Reasoning:</strong> <span id="ai-reasoning">-</span>
+          </div>
+          <p class="hint" style="margin: 0; border-top: 1px dashed var(--color-border); padding-top: 6px; font-size: 11.5px;">
+            * AI-assisted analysis — final decision remains with authorized official.
+          </p>
+        </div>
+
+        <h4 style="margin-top:20px; margin-bottom:10px; border-bottom:1px solid var(--color-border); padding-bottom:4px;">
+          Remarks
+        </h4>
+        <div class="form-group">
+          <div class="form-label-row">
+            <label for="ins-remarks">General Remarks / Notes</label>
+            <button type="button" class="btn-desc-mic" data-target="ins-remarks" title="Speak to dictate in selected language">
+              <span class="mic-icon" style="display:inline-flex; align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> <span class="mic-status-text">Voice Input</span>
+            </button>
+          </div>
+          <textarea id="ins-remarks" placeholder="Enter any additional inspection logs..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="ins-status">Submission Mode</label>
+          <select id="ins-status">
+            <option value="SUBMITTED">Finalized &amp; Submitted (Triggers violations)</option>
+            <option value="DRAFT">Save as Draft</option>
+          </select>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="modal-save">Submit Inspection</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Inspection Detail Modal -->
+<div class="modal-backdrop hidden" id="detail-modal">
+  <div class="modal" style="max-width:800px;">
+    <div class="modal-header">
+      <h3 id="detail-title">Inspection Details</h3>
+      <button class="modal-close" id="detail-close">&times;</button>
+    </div>
+    <div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+      <div id="detail-content">
+        Loading details...
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="detail-back">Close</button>
+      <div id="workflow-actions-container" style="display:inline-block;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/inspections.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

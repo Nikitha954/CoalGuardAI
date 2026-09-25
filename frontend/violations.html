@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Violations — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Violations Management</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <select id="filter-severity">
+          <option value="">All Severities</option>
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="OPEN">Open</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="RESOLVED">Resolved</option>
+          <option value="VERIFIED">Verified</option>
+          <option value="CLOSED">Closed</option>
+          <option value="OVERDUE">Overdue</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="report-violation-btn" class="btn btn-danger hidden">+ Report Violation</button>
+      </div>
+
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Violation Code</th>
+              <th>Mine</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Severity</th>
+              <th>Reported By</th>
+              <th>Assignee</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="violations-table-body">
+            <tr><td colspan="10" class="state-panel">Loading violations...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Manual Report Violation Modal -->
+<div class="modal-backdrop hidden" id="violation-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Report Compliance Violation</h3>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <form id="violation-form">
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="vio-mine">Mine Site</label>
+          <select id="vio-mine" required></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="vio-category">Category</label>
+            <select id="vio-category" required></select>
+          </div>
+          <div class="form-group">
+            <label for="vio-severity">Severity</label>
+            <select id="vio-severity" required>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+              <option value="CRITICAL">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label-row">
+            <label for="vio-description">Breach Description</label>
+            <button type="button" class="btn-desc-mic" data-target="vio-description" title="Speak to dictate in selected language">
+              <span class="mic-icon" style="display:inline-flex; align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> <span class="mic-status-text">Voice Input</span>
+            </button>
+          </div>
+          <textarea id="vio-description" required placeholder="Describe the safety, environmental or labour violation details..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="vio-deadline">Correction Deadline</label>
+          <input type="date" id="vio-deadline" placeholder="YYYY-MM-DD (Leave blank for auto-calculation)" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-danger" id="modal-save">Report Violation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Assign Corrective Action Modal -->
+<div class="modal-backdrop hidden" id="assign-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Assign Corrective Action</h3>
+      <button class="modal-close" id="assign-close">&times;</button>
+    </div>
+    <form id="assign-form">
+      <div class="modal-body">
+        <input type="hidden" id="assign-violation-id" />
+        <div class="form-group">
+          <label>Violation Code</label>
+          <input type="text" id="assign-violation-code" readonly style="background: var(--color-bg-light);" />
+        </div>
+        <div class="form-group">
+          <label for="assign-user">Assign Responsible Person</label>
+          <select id="assign-user" required></select>
+        </div>
+        <div class="form-group">
+          <div class="form-label-row">
+            <label for="assign-desc">Action Required Description</label>
+            <button type="button" class="btn-desc-mic" data-target="assign-desc" title="Speak to dictate in selected language">
+              <span class="mic-icon" style="display:inline-flex; align-items:center;"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></span> <span class="mic-status-text">Voice Input</span>
+            </button>
+          </div>
+          <textarea id="assign-desc" required placeholder="Detail the steps the assignee must take to correct this violation..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="assign-deadline">Target Completion Date</label>
+          <input type="date" id="assign-deadline" required />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="assign-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="assign-save">Assign Action</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/violations.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

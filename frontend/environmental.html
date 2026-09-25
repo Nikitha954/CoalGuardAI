@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Environmental Telemetry &amp; Statutory Compliance — Coal Governance</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Environmental Telemetry &amp; CPCB Compliance</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Environmental KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Avg PM10 Dust Index</div>
+          <div class="kpi-value" id="kpi-pm10">--</div>
+          <div class="kpi-hint">CPCB limit: &le; 100 &micro;g/m&sup3;</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Mine Effluent pH</div>
+          <div class="kpi-value positive" id="kpi-ph">--</div>
+          <div class="kpi-hint">Statutory range: 6.5 &ndash; 8.5</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Methane CH4 Vol %</div>
+          <div class="kpi-value" id="kpi-ch4">--%</div>
+          <div class="kpi-hint">DGMS threshold: &lt; 1.25%</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Ambient Noise Level</div>
+          <div class="kpi-value" id="kpi-noise">-- dB</div>
+          <div class="kpi-hint">Day limit: &le; 75 dBA</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <div class="spacer"></div>
+        <button id="btn-log-env" class="btn btn-primary hidden">+ Log Environmental Reading</button>
+      </div>
+
+      <!-- Environmental Readings Table -->
+      <div class="card">
+        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <h3>Continuous Emission &amp; Effluent Monitoring (OCEMS)</h3>
+          <span class="hint">Live statutory telemetry logs</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mine Site</th>
+              <th>Date</th>
+              <th>PM10 (&micro;g/m&sup3;)</th>
+              <th>PM2.5 (&micro;g/m&sup3;)</th>
+              <th>SO2 / NO2</th>
+              <th>Effluent pH</th>
+              <th>Noise (dB)</th>
+              <th>Methane (%)</th>
+              <th>Compliance</th>
+            </tr>
+          </thead>
+          <tbody id="env-table-body">
+            <tr><td colspan="10" class="state-panel">Loading environmental telemetry...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Log Reading Modal -->
+<div class="modal-backdrop hidden" id="env-modal">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <h3>Record Environmental Telemetry</h3>
+      <button class="modal-close" id="env-modal-close">&times;</button>
+    </div>
+    <form id="env-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="env-mine">Mine Site</label>
+            <select id="env-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="env-date">Reading Date</label>
+            <input type="date" id="env-date" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="env-pm10">PM10 (&micro;g/m&sup3;) [Limit: 100]</label>
+            <input type="number" step="0.1" id="env-pm10" required placeholder="85.5" />
+          </div>
+          <div class="form-group">
+            <label for="env-pm25">PM2.5 (&micro;g/m&sup3;) [Limit: 60]</label>
+            <input type="number" step="0.1" id="env-pm25" required placeholder="42.0" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="env-so2">SO2 (&micro;g/m&sup3;)</label>
+            <input type="number" step="0.1" id="env-so2" value="25.0" />
+          </div>
+          <div class="form-group">
+            <label for="env-no2">NO2 (&micro;g/m&sup3;)</label>
+            <input type="number" step="0.1" id="env-no2" value="30.0" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="env-ph">Effluent Water pH [6.5 - 8.5]</label>
+            <input type="number" step="0.1" id="env-ph" required placeholder="7.2" />
+          </div>
+          <div class="form-group">
+            <label for="env-noise">Noise Level (dB) [Limit: 75]</label>
+            <input type="number" step="0.1" id="env-noise" required placeholder="68.0" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="env-ch4">Methane CH4 % [DGMS Limit: 1.25%]</label>
+            <input type="number" step="0.01" id="env-ch4" value="0.05" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="env-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Telemetry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/environmental.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

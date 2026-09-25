@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Analytics — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+  <link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>AI &amp; Advanced Analytics</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <div class="toolbar" style="margin-bottom:20px;">
+        <span class="hint">Machine learning models (Isolation Forest) &amp; explainable risk-scoring engines</span>
+        <div class="spacer"></div>
+        <button id="recalc-risk-btn" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+          Re-evaluate Mine Risk Scores
+        </button>
+      </div>
+
+      <div class="dash-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+        <!-- Column 1: Explainable Risk Scores -->
+        <div>
+          <div class="section-title-row" style="margin-top:0;">
+            <h2>Explainable Risk Scoring (0-100)</h2>
+          </div>
+          <div id="risk-scores-container" style="display: flex; flex-direction: column; gap: 12px;">
+            <p class="state-panel">Loading risk scores...</p>
+          </div>
+        </div>
+
+        <!-- Column 2: Isolation Forest Anomalies -->
+        <div>
+          <div class="section-title-row" style="margin-top:0;">
+            <h2>Isolation Forest Anomaly Log</h2>
+          </div>
+          <div class="card" style="padding:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mine</th>
+                  <th>Indicator Type</th>
+                  <th>Details</th>
+                  <th>Severity</th>
+                  <th>Detected At</th>
+                </tr>
+              </thead>
+              <tbody id="anomalies-table-body">
+                <tr><td colspan="5" class="state-panel">Loading anomalies...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Chronic & Recurring Violations (Repeat Offenders) -->
+      <div style="margin-top:24px;">
+        <div class="section-title-row">
+          <div>
+            <h2>Chronic Compliance Breaches &amp; Repeat Offenders</h2>
+            <div class="hint">Identifies systematic recurring failures across consecutive inspections weighting heavily into AI risk scores</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Mine Site</th>
+                <th>Category</th>
+                <th>Rule Code</th>
+                <th>Violation Title</th>
+                <th>Repeat Count</th>
+                <th>Statutory Severity</th>
+                <th>AI Risk Surcharge</th>
+                <th>Latest Occurrence</th>
+              </tr>
+            </thead>
+            <tbody id="recurring-table-body">
+              <tr><td colspan="8" class="state-panel">Loading repeat violation analysis...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

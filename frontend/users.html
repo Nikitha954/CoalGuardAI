@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>User &amp; RBAC Management — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>User &amp; Role-Based Access Control (RBAC)</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- User KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total System Users</div>
+          <div class="kpi-value" id="kpi-total-u">--</div>
+          <div class="kpi-hint">Registered across all tiers</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active Accounts</div>
+          <div class="kpi-value positive" id="kpi-active-u">--</div>
+          <div class="kpi-hint">Authenticated via JWT &amp; bcrypt</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Field Inspectors</div>
+          <div class="kpi-value highlight" id="kpi-inspectors-u">--</div>
+          <div class="kpi-hint">GPS telemetry enabled</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Mine &amp; Safety Officers</div>
+          <div class="kpi-value" id="kpi-officers-u">--</div>
+          <div class="kpi-hint">Operational supervisors</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <input type="text" id="search-user" placeholder="Search user by name, email, or designation..." style="min-width:260px; padding:7px 12px; font-size:13.5px;" />
+        <select id="filter-role"><option value="">All Roles</option></select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive / Deactivated</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="btn-add-user" class="btn btn-primary">+ Create User Account</button>
+      </div>
+
+      <!-- Users Table -->
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Subsidiary</th>
+              <th>Assigned Mine</th>
+              <th>Designation</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <tr><td colspan="9" class="state-panel">Loading user accounts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Create / Edit User Modal -->
+<div class="modal-backdrop hidden" id="user-modal">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <h3 id="user-modal-title">Create System User</h3>
+      <button class="modal-close" id="user-modal-close">&times;</button>
+    </div>
+    <form id="user-form">
+      <input type="hidden" id="u-id" />
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="u-name">Full Name</label>
+            <input type="text" id="u-name" required placeholder="e.g. Ramesh Kumar" />
+          </div>
+          <div class="form-group">
+            <label for="u-email">Email Address</label>
+            <input type="email" id="u-email" required placeholder="ramesh@coal.gov.in" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="u-password">Password <span id="pwd-hint" class="hint">(Leave blank to keep current)</span></label>
+            <input type="password" id="u-password" placeholder="Min 6 characters" />
+          </div>
+          <div class="form-group">
+            <label for="u-role">Role</label>
+            <select id="u-role" required></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="u-subsidiary">Subsidiary</label>
+            <select id="u-subsidiary"><option value="">Corporate Headquarters / None</option></select>
+          </div>
+          <div class="form-group">
+            <label for="u-mine">Assigned Mine Site</label>
+            <select id="u-mine"><option value="">HQ / Multi-Mine Overseer</option></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="u-desig">Designation</label>
+            <input type="text" id="u-desig" placeholder="e.g. Senior Inspector / Safety Officer" />
+          </div>
+          <div class="form-group">
+            <label for="u-phone">Phone Number</label>
+            <input type="text" id="u-phone" placeholder="+91 98765 43210" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="user-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save User</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/users.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>

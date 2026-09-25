@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Incidents & Emergency SOS — Coal Governance Platform</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/dashboard.css" />
+<link rel="stylesheet" href="css/forms.css" />
+<link rel="stylesheet" href="css/responsive.css" />
+<link rel="manifest" href="manifest.json" />
+</head>
+<body>
+
+<div class="app-shell">
+  <aside class="sidebar" id="app-sidebar"></aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Incidents &amp; Emergency Response</h1>
+      <div class="topbar-user" id="topbar-user-info"></div>
+    </header>
+
+    <main class="content">
+      <!-- Incident KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total Incidents</div>
+          <div class="kpi-value" id="kpi-total-inc">--</div>
+          <div class="kpi-hint">All logged events</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Critical / SOS Alerts</div>
+          <div class="kpi-value danger" id="kpi-critical-inc">--</div>
+          <div class="kpi-hint">High priority emergencies</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Active / Under Review</div>
+          <div class="kpi-value warn" id="kpi-open-inc">--</div>
+          <div class="kpi-hint">Investigation ongoing</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Closed &amp; Resolved</div>
+          <div class="kpi-value positive" id="kpi-closed-inc">--</div>
+          <div class="kpi-hint">Post-incident action verified</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <select id="filter-mine"><option value="">All Mines</option></select>
+        <select id="filter-severity">
+          <option value="">All Severities</option>
+          <option value="CRITICAL">Critical</option>
+          <option value="HIGH">High</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="LOW">Low</option>
+        </select>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="OPEN">Open</option>
+          <option value="UNDER_REVIEW">Under Review</option>
+          <option value="CLOSED">Closed</option>
+        </select>
+        <div class="spacer"></div>
+        <button id="btn-report-incident" class="btn btn-secondary">+ Report Field Incident</button>
+      </div>
+
+      <!-- Incidents Table -->
+      <div class="card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Mine Site</th>
+              <th>Incident Type</th>
+              <th>Severity</th>
+              <th>Description</th>
+              <th>Reported By</th>
+              <th>Incident Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="incidents-table-body">
+            <tr><td colspan="9" class="state-panel">Loading incidents...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Report Incident Modal -->
+<div class="modal-backdrop hidden" id="incident-modal">
+  <div class="modal" style="max-width:650px;">
+    <div class="modal-header">
+      <h3>Report Mine Site Incident</h3>
+      <button class="modal-close" id="incident-modal-close">&times;</button>
+    </div>
+    <form id="incident-form">
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inc-mine">Mine Site</label>
+            <select id="inc-mine" required></select>
+          </div>
+          <div class="form-group">
+            <label for="inc-type">Incident Type</label>
+            <select id="inc-type" required>
+              <option value="Safety Hazard / Near Miss">Safety Hazard / Near Miss</option>
+              <option value="Machinery / HEMM Breakdown">Machinery / HEMM Breakdown</option>
+              <option value="Gas / Environmental Release">Gas / Environmental Release</option>
+              <option value="Fire / Spontaneous Combustion">Fire / Spontaneous Combustion</option>
+              <option value="Slope / Strata Instability">Slope / Strata Instability</option>
+              <option value="Medical / Injury">Medical / Injury</option>
+              <option value="Other Incident">Other Incident</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inc-sev">Severity</label>
+            <select id="inc-sev" required>
+              <option value="LOW">Low</option>
+              <option value="MEDIUM" selected>Medium</option>
+              <option value="HIGH">High</option>
+              <option value="CRITICAL">Critical (Emergency)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="inc-date">Date &amp; Time</label>
+            <input type="datetime-local" id="inc-date" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="inc-desc">Incident Description &amp; Observations</label>
+          <textarea id="inc-desc" rows="4" required placeholder="Describe location, equipment involved, and any immediate containment actions taken..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="incident-modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Incident Report</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast-root"></div>
+
+<script src="js/config.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/api.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/incidents.js"></script>
+<script src="js/pwa.js"></script>
+<script src="js/voice-assistant.js"></script>
+</body>
+</html>
