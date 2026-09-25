@@ -248,7 +248,7 @@ function renderDocumentsTable(docs) {
     const riskClass = { LOW: 'badge-low', MEDIUM: 'badge-medium', HIGH: 'badge-high', CRITICAL: 'badge-critical' };
     const riskBadge = riskClass[d.risk_level] || 'badge-low';
 
-    const API_BASE = (window.APP_CONFIG?.API_BASE_URL || 'http://localhost:8081/api').replace('/api', '');
+    const API_BASE = (window.APP_CONFIG?.API_BASE_URL || '/api').replace('/api', '');
     const relativePath = d.file_path ? d.file_path.replace('./', '') : '';
     const fileUrl = `${API_BASE}/${relativePath}`;
 

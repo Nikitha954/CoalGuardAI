@@ -63,7 +63,7 @@ window.syncOfflineInspections = async function() {
 
     showToast(`Syncing ${items.length} offline inspection(s)...`, 'info');
     const token = localStorage.getItem('cg_token');
-    const API_BASE = window.APP_CONFIG?.API_BASE_URL || 'http://localhost:8081/api';
+    const API_BASE = window.APP_CONFIG?.API_BASE_URL || '/api';
 
     let successCount = 0;
     for (const item of items) {

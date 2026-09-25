@@ -4,7 +4,7 @@
  * This module normalizes that so callers can just await api.get(...).
  */
 const API = (() => {
-  const BASE_URL = window.APP_CONFIG?.API_BASE_URL || 'http://localhost:8081/api';
+  const BASE_URL = window.APP_CONFIG?.API_BASE_URL || '/api';
 
   function getToken() {
     return localStorage.getItem('cg_token');

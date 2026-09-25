@@ -155,7 +155,7 @@
         try {
           if (statusIndicator) statusIndicator.textContent = "Thinking...";
           const token = localStorage.getItem('cg_token');
-          const API_BASE = window.APP_CONFIG?.API_BASE_URL || 'http://localhost:8081/api';
+          const API_BASE = window.APP_CONFIG?.API_BASE_URL || '/api';
 
           const res = await fetch(`${API_BASE}/ai/voice-query`, {
             method: 'POST',
